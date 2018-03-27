@@ -26,9 +26,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     TextInputLayout tilName, tilEmail, tilPassword;
     EditText etEmail, etPassword;
-    Button btnCreateAcoount;
+    Button btnCreateAccount;
     private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
+    FirebaseUser currentUser;
+    android.support.v7.widget.Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +42,26 @@ public class RegisterActivity extends AppCompatActivity {
         tilPassword = findViewById(R.id.tilPassword);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
-        btnCreateAcoount = findViewById(R.id.btnCreateAccount);
+        btnCreateAccount = findViewById(R.id.btnCreateAccount);
         progressDialog = new ProgressDialog(this);
+
+        currentUser = mAuth.getCurrentUser();
+
+        //moving back to the register activity if not signed in
+        if(currentUser == null) {
+            displayWelcomneScreen();
+        }
+
+        toolbar = findViewById(R.id.app_bar_register_activity);
+
+        //setting up tool bar
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Create Account");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
 
-        btnCreateAcoount.setOnClickListener(new View.OnClickListener() {
+        btnCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = etEmail.getText().toString().trim();
@@ -62,7 +78,9 @@ public class RegisterActivity extends AppCompatActivity {
     private void signUpNewUser(String email, String password) {
 
         //setting up progressDialog
-        progressDialog.setMessage("Creating Account...");
+        progressDialog.setTitle("Registering User");
+        progressDialog.setMessage("Please wait while we create your account...");
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
 
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -77,6 +95,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                             startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                             finish();
+                            progressDialog.dismiss();
 
 //                            updateUI(user);
                         } else {
@@ -85,11 +104,19 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.makeText(RegisterActivity.this, "Authentication failed.",
                                     LENGTH_SHORT).show();
 //                            updateUI(null);
+
+                            progressDialog.hide();
                         }
-                        progressDialog.dismiss();
                         // ...
                     }
                 });
+    }
+
+    private void displayWelcomneScreen() {
+
+        //back to start
+        startActivity(new Intent(RegisterActivity.this, RegisterActivity.class));
+        finish();
     }
 /*
     @Override

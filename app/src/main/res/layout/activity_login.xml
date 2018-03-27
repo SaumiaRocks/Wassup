@@ -1,33 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.designstudioiitr.wassup.LoginActivity">
+    tools:context="com.example.designstudioiitr.wassup.RegisterActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <include
+        layout="@layout/layout_app_bar"
+        android:id="@+id/app_bar_login_activity"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilLoginEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        app:layout_constraintTop_toBottomOf="@+id/app_bar_login_activity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="125dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        >
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <EditText
+            android:id="@+id/etLoginEmail"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            />
 
-    </android.support.design.widget.AppBarLayout>
+    </android.support.design.widget.TextInputLayout>
 
-    <include layout="@layout/content_login" />
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilLoginPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/tilLoginEmail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="25dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        >
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        <EditText
+            android:id="@+id/etLoginPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:layout_marginTop="50dp"
+        android:text="Login"
+        app:layout_constraintTop_toBottomOf="@+id/tilLoginPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteX="120dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
+        />
 
-</android.support.design.widget.CoordinatorLayout>
+</android.support.constraint.ConstraintLayout>
