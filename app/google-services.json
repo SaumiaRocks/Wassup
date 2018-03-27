@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "737556841434",
+    "firebase_url": "https://wassup-5c033.firebaseio.com",
+    "project_id": "wassup-5c033",
+    "storage_bucket": "wassup-5c033.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:737556841434:android:628650eb4a336e26",
+        "android_client_info": {
+          "package_name": "com.example.designstudioiitr.wassup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "737556841434-ccis4atj7c8g8go2a6gm2k2lveknplp2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.designstudioiitr.wassup",
+            "certificate_hash": "9fe0384cdc5720c4c82fa8b796649437645cadb7"
+          }
+        },
+        {
+          "client_id": "737556841434-bco4tig2jfooc3e1ibfss3hrcj2es5qb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYuQvv49QlgDzLBv5EAbBw6wXPWRfFXiw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "737556841434-bco4tig2jfooc3e1ibfss3hrcj2es5qb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

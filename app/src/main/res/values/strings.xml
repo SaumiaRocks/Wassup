@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Wassup</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="your_name">Your Name</string>
+</resources>
