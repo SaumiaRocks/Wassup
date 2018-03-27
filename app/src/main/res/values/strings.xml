@@ -3,4 +3,7 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="your_name">Your Name</string>
     <string name="password">Password</string>
+    <string name="need_a_new_account">Need a new Account?</string>
+    <string name="already_have_account">Already have Account?</string>
+    <string name="welcome_to_wassup">Welcome to Wassup!</string>
 </resources>

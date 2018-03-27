@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,11 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
         //moving back to the register activity if not signed in
         if(currentUser == null) {
-            displayWelcomneScreen();
+            displayWelcomeScreen();
         }
     }
 
-    private void displayWelcomneScreen() {
+    private void displayWelcomeScreen() {
 
         //back to start
         startActivity(new Intent(MainActivity.this, RegisterActivity.class));
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
         if(item.getItemId() == R.id.logOut) {
             FirebaseAuth.getInstance().signOut();
-            displayWelcomneScreen();
+            displayWelcomeScreen();
         }
 
         return true;
