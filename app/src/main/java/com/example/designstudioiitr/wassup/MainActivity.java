@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -12,6 +13,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
 
     FirebaseAuth firebaseAuth;
     FirebaseUser currentUser;
@@ -39,15 +42,18 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
 
-        //moving back to the register activity if not signed in
+        //moving back to the home activity if not signed in
         if(currentUser == null) {
             displayWelcomeScreen();
         }
+
+        Log.e(TAG, "onCreate: uid of current user : " + currentUser.getUid().toString());
     }
 
     private void displayWelcomeScreen() {
 
         //back to start
+        Log.e(TAG, "displaying welcome screen from main activity");
         Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

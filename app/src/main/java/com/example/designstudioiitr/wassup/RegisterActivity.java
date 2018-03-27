@@ -17,6 +17,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
@@ -30,6 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
     FirebaseUser currentUser;
+    DatabaseReference databaseReference;
     android.support.v7.widget.Toolbar toolbar;
 
 
@@ -45,9 +51,9 @@ public class RegisterActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnCreateAccount = findViewById(R.id.btnCreateAccount);
         progressDialog = new ProgressDialog(this);
-
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+
 
         toolbar = findViewById(R.id.app_bar_register_activity);
 
@@ -61,6 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String email = etEmail.getText().toString().trim();
                 String password = etPassword.getText().toString().trim();
+
 
                 //code to detect empty fields
 
@@ -89,15 +96,38 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.makeText(RegisterActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-                            finish();
-                            progressDialog.dismiss();
+                            //saving data to firebase
+                            databaseReference = FirebaseDatabase.getInstance().getReference().child("Users")
+                                    .child(user.getUid());
+
+                            String name = tilName.getEditText().toString();
+                            HashMap<String, String> userDetails = new HashMap<String, String>();
+
+                            userDetails.put("name", name);
+                            userDetails.put("status", "Hey there! I'm using Wassup!");
+                            userDetails.put("image", "default");
+                            userDetails.put("thumb_image", "default");
+
+                            databaseReference.setValue(userDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()) {
+                                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                                        finish();
+                                        progressDialog.dismiss();
+                                    }
+                                    else {
+                                        Toast.makeText(RegisterActivity.this, "Authentication failed. Please try again...", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+                            });
 
 //                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.e(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
+                            Toast.makeText(RegisterActivity.this, "Authentication failed. Please try again...",
                                     LENGTH_SHORT).show();
 //                            updateUI(null);
 
@@ -108,14 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void displayWelcomeScreen() {
 
-        //back to start
-        Intent intent = new Intent(RegisterActivity.this, WelcomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        finish();
-    }
 /*
     @Override
     public void onStart() {
