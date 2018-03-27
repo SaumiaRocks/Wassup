@@ -32,6 +32,7 @@ public class RegisterActivity extends AppCompatActivity {
     FirebaseUser currentUser;
     android.support.v7.widget.Toolbar toolbar;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

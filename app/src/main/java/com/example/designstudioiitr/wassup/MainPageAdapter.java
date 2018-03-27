@@ -12,6 +12,7 @@ public class MainPageAdapter extends FragmentPagerAdapter {
 
     private final static int NUM_FRAGMENTS = 3;
 
+
     public MainPageAdapter(FragmentManager fm) {
         super(fm);
     }
@@ -34,5 +35,21 @@ public class MainPageAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return NUM_FRAGMENTS;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+
+        switch (position) {
+            case 0 :
+                return "Chats";
+            case 1 :
+                return "Contacts";
+            case 2 :
+                return "Requests";
+            default :
+                return null;
+        }
+
     }
 }
