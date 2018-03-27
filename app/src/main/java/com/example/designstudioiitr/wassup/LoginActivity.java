@@ -40,10 +40,6 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
-        if(currentUser == null) {
-            displayWelcomeScreen();
-        }
-
         toolbar = findViewById(R.id.app_bar_login_activity);
 
         //setting up tool bar
@@ -71,6 +67,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+
 
     private void loginUser(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
@@ -106,7 +103,9 @@ public class LoginActivity extends AppCompatActivity {
     private void displayWelcomeScreen() {
 
         //back to start
-        startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+        Intent intent = new Intent(LoginActivity.this, WelcomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
         finish();
     }
 

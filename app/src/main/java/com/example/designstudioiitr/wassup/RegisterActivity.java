@@ -45,12 +45,8 @@ public class RegisterActivity extends AppCompatActivity {
         btnCreateAccount = findViewById(R.id.btnCreateAccount);
         progressDialog = new ProgressDialog(this);
 
+        mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-
-        //moving back to the register activity if not signed in
-        if(currentUser == null) {
-            displayWelcomneScreen();
-        }
 
         toolbar = findViewById(R.id.app_bar_register_activity);
 
@@ -58,8 +54,6 @@ public class RegisterActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Create Account");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mAuth = FirebaseAuth.getInstance();
 
         btnCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
     }
+
 
     private void signUpNewUser(String email, String password) {
 
@@ -112,10 +107,12 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void displayWelcomneScreen() {
+    private void displayWelcomeScreen() {
 
         //back to start
-        startActivity(new Intent(RegisterActivity.this, RegisterActivity.class));
+        Intent intent = new Intent(RegisterActivity.this, WelcomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
         finish();
     }
 /*

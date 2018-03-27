@@ -1,6 +1,8 @@
 package com.example.designstudioiitr.wassup;
 
 import android.content.Intent;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,6 +16,9 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FirebaseUser currentUser;
     android.support.v7.widget.Toolbar toolbar;
+    ViewPager viewPager;
+    MainPageAdapter mainPageAdapter;
+    TabLayout mainPageTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +26,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         toolbar = findViewById(R.id.app_bar_main_activity);
+        viewPager = findViewById(R.id.vpMainPage);
+        mainPageAdapter = new MainPageAdapter(getSupportFragmentManager());
+        mainPageTabLayout = findViewById(R.id.tabs_main_page);
+
+        viewPager.setAdapter(mainPageAdapter);
 
         //setting up tool bar
         setSupportActionBar(toolbar);
@@ -38,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private void displayWelcomeScreen() {
 
         //back to start
-        startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+        Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
         finish();
     }
 

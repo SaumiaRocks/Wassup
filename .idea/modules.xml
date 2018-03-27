@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Wassup.iml" filepath="$PROJECT_DIR$/Wassup.iml" />
+      <module fileurl="file://D:\App developement\Wassup\Wassup\Wassup.iml" filepath="D:\App developement\Wassup\Wassup\Wassup.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\App developement\Wassup\Wassup\app\app.iml" filepath="D:\App developement\Wassup\Wassup\app\app.iml" />
     </modules>
   </component>
 </project>
