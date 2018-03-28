@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(item.getItemId() == R.id.menuSettings) {
-
+            startActivity(new Intent(MainActivity.this, StatusActivity.class));
         }
 
         return true;
