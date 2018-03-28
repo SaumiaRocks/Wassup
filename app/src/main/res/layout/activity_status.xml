@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.designstudioiitr.wassup.StatusActivity">
+
+    <include layout="@layout/layout_app_bar"
+        android:id="@+id/status_activity_app_bar"/>
+    
+    <LinearLayout
+        android:id="@+id/topLinearLayout"
+        android:layout_below="@+id/status_activity_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="15dp">
+        
+        <TextView
+            android:id="@+id/tvCurrentStatus"
+            android:text="Your Current Status"
+            android:textColor="@color/colorPrimary_dark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:text="Hey there! I'm using Wassup!"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            />
+
+            <ImageButton
+                android:id="@+id/ibEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit_status"
+                android:background="@android:color/transparent"
+                android:layout_alignParentRight="true"
+                />
+
+        </RelativeLayout>
+        
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/topLinearLayout"
+        android:layout_margin="15dp"
+        >
+
+        <TextView
+            android:id="@+id/tvSelectYourStatus"
+            android:text="Select your Status"
+            android:textColor="@color/colorPrimary_dark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ListView
+            android:id="@+id/lvStatusChoice"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    </ScrollView>
+    
+</RelativeLayout>

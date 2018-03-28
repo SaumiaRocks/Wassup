@@ -30,7 +30,11 @@
             android:parentActivityName=".WelcomeActivity"
             android:theme="@style/AppTheme" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".UpdateStatusActivity"></activity>
+        <activity android:name=".UpdateStatusActivity"
+            android:parentActivityName=".StatusActivity"/>
+        <activity
+            android:name=".StatusActivity"
+            android:parentActivityName=".ProfileActivity" />
     </application>
 
 </manifest>

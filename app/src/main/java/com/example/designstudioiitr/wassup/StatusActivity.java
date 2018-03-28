@@ -3,20 +3,19 @@ package com.example.designstudioiitr.wassup;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class UpdateStatusActivity extends AppCompatActivity {
+public class StatusActivity extends AppCompatActivity {
 
     android.support.v7.widget.Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_update_status);
-
+        setContentView(R.layout.activity_status);
 
         //setting up tool bar
-        toolbar = findViewById(R.id.update_status_activity_app_bar);
+        toolbar = findViewById(R.id.status_activity_app_bar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Update Status");
-
+        getSupportActionBar().setTitle("Status");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }
