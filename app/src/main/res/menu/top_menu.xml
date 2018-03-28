@@ -5,9 +5,16 @@
     >
 
     <item
-        android:id="@+id/logOut"
+        android:id="@+id/menuLogOut"
         app:showAsAction="never"
         android:title="Sign out"
+        android:iconTint="@color/colorIcons"
+        />
+
+    <item
+        android:id="@+id/menuSettings"
+        app:showAsAction="never"
+        android:title="Settings"
         android:iconTint="@color/colorIcons"
         />
 

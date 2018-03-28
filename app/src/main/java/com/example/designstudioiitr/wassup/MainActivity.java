@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
 
-        //moving back to the home activity if not signed in
+        //moving back to the home activity if user doesn't exist
         if(currentUser == null) {
             displayWelcomeScreen();
         }
@@ -72,9 +72,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        if(item.getItemId() == R.id.logOut) {
+        if(item.getItemId() == R.id.menuLogOut) {
             FirebaseAuth.getInstance().signOut();
             displayWelcomeScreen();
+        }
+
+        if(item.getItemId() == R.id.menuSettings) {
+
         }
 
         return true;

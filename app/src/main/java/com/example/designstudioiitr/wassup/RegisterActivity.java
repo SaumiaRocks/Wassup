@@ -30,7 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
 
     TextInputLayout tilName, tilEmail, tilPassword;
-    EditText etEmail, etPassword;
+    EditText etEmail, etPassword, etName;
     Button btnCreateAccount;
     private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
@@ -48,6 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
         tilEmail = findViewById(R.id.tilEmail);
         tilPassword = findViewById(R.id.tilPassword);
         etEmail = findViewById(R.id.etEmail);
+        etName = findViewById(R.id.etName);
         etPassword = findViewById(R.id.etPassword);
         btnCreateAccount = findViewById(R.id.btnCreateAccount);
         progressDialog = new ProgressDialog(this);
@@ -93,15 +94,17 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Toast.makeText(RegisterActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
+
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             //saving data to firebase
                             databaseReference = FirebaseDatabase.getInstance().getReference().child("Users")
                                     .child(user.getUid());
 
-                            String name = tilName.getEditText().toString();
+                            String name = etName.getText().toString();
                             HashMap<String, String> userDetails = new HashMap<String, String>();
+
+                            Log.e(TAG, "onComplete: name : " + name);
 
                             userDetails.put("name", name);
                             userDetails.put("status", "Hey there! I'm using Wassup!");
@@ -112,6 +115,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()) {
+                                        Toast.makeText(RegisterActivity.this, "User Registered", Toast.LENGTH_SHORT).show();
                                         startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                                         finish();
                                         progressDialog.dismiss();
