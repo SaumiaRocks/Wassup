@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -69,11 +71,47 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         //moving back to the home activity if user doesn't exist
-        if(currentUser == null) {
+        if (currentUser == null) {
             displayWelcomeScreen();
         }
 
+
+        //setting change name button
+        btnChangeName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        //setting update status button
+        btnUpdateStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String status = dataSnapshot.child("status").getValue().toString();
+
+                        Intent intent = new Intent(ProfileActivity.this, StatusActivity.class);
+                        intent.putExtra("currentStatus", status);
+                        startActivity(intent);
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT);
+
+                    }
+
+
+                });
+            }
+        });
+
     }
+
 
     private void displayWelcomeScreen() {
 

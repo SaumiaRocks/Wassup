@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(item.getItemId() == R.id.menuSettings) {
-            startActivity(new Intent(MainActivity.this, StatusActivity.class));
+            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
         }
 
         return true;

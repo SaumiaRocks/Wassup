@@ -1,10 +1,14 @@
 package com.example.designstudioiitr.wassup;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -24,11 +28,32 @@ public class StatusActivity extends AppCompatActivity {
     ArrayList<String> sampleStatus;
     ArrayAdapter<String> adapter;
     DatabaseReference databaseSampleStatus;
+    ImageButton ibEditStatus;
+    String currentStatus;
+    TextView tvStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_status);
+
+        ibEditStatus = findViewById(R.id.ibEditStatus);
+        tvStatus = findViewById(R.id.tvStatus);
+
+        //setting status in textview
+        Intent intent = getIntent();
+        currentStatus = intent.getStringExtra("currentStatus");
+        tvStatus.setText(currentStatus);
+
+        //setting edit status button
+        ibEditStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(StatusActivity.this, UpdateStatusActivity.class);
+                intent.putExtra("currentStatus", currentStatus );
+                startActivity(intent);
+            }
+        });
 
         databaseSampleStatus = FirebaseDatabase.getInstance().getReference().child("StatusChoices");
 
@@ -36,11 +61,6 @@ public class StatusActivity extends AppCompatActivity {
         sampleStatus = new ArrayList<String>();
 
         inflateArrayListFromFirebase();
-
-
-
-
-
 
         //setting up tool bar
         toolbar = findViewById(R.id.status_activity_app_bar);
