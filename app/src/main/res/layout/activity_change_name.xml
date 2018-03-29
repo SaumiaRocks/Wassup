@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.designstudioiitr.wassup.UpdateStatusActivity">
+    tools:context="com.example.designstudioiitr.wassup.ChangeNameActivity">
 
-    <include layout="@layout/layout_app_bar" android:id="@+id/update_status_activity_app_bar" />
+    <include layout="@layout/layout_app_bar" android:id="@+id/change_name_activity_app_bar" />
 
     <EditText
-        android:id="@+id/etNewStatus"
+        android:id="@+id/etNewName"
         android:layout_width="match_parent"
+        android:layout_below="@+id/change_name_activity_app_bar"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/update_status_activity_app_bar"
         android:padding="15dp"
         android:layout_marginTop="25dp"
         android:textColor="@color/colorPrimary_text"
@@ -25,21 +25,21 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
 
-    <Button
-        android:id="@+id/btnUpdateStatusCancel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:layout_weight="1"
-        />
+        <Button
+            android:id="@+id/btnChangeNameCancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:layout_weight="1"
+            />
 
         <Button
-        android:id="@+id/btnUpdateStatusOk"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="OK"
-        android:layout_weight="1"
-        />
+            android:id="@+id/btnChangeNameOk"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:layout_weight="1"
+            />
 
     </LinearLayout>
 

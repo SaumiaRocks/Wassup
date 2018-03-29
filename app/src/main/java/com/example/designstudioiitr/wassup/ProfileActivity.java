@@ -80,7 +80,22 @@ public class ProfileActivity extends AppCompatActivity {
         btnChangeName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String name = dataSnapshot.child("name").getValue().toString();
 
+                        Intent intent = new Intent(ProfileActivity.this, ChangeNameActivity.class);
+                        intent.putExtra("currentName", name);
+                        startActivity(intent);
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT);
+                    }
+                });
             }
         });
 

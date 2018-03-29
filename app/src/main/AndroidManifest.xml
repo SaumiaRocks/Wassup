@@ -29,12 +29,17 @@
             android:label="@string/title_activity_login"
             android:parentActivityName=".WelcomeActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".ProfileActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".UpdateStatusActivity"
-            android:parentActivityName=".StatusActivity"/>
+        <activity
+            android:name=".ProfileActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".UpdateStatusActivity"
+            android:parentActivityName=".StatusActivity" />
         <activity
             android:name=".StatusActivity"
+            android:parentActivityName=".ProfileActivity" />
+        <activity
+            android:name=".ChangeNameActivity"
             android:parentActivityName=".ProfileActivity" />
     </application>
 

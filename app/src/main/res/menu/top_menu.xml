@@ -9,6 +9,7 @@
         app:showAsAction="never"
         android:title="Sign out"
         android:iconTint="@color/colorIcons"
+        android:orderInCategory="2"
         />
 
     <item
@@ -16,6 +17,7 @@
         app:showAsAction="never"
         android:title="Settings"
         android:iconTint="@color/colorIcons"
+        android:orderInCategory="1"
         />
 
 </menu>
