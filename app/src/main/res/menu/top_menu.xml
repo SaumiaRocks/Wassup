@@ -5,11 +5,19 @@
     >
 
     <item
+        android:id="@+id/menuAllUsers"
+        app:showAsAction="never"
+        android:title="All Users"
+        android:iconTint="@color/colorIcons"
+        android:orderInCategory="1"
+        />
+
+    <item
         android:id="@+id/menuLogOut"
         app:showAsAction="never"
         android:title="Sign out"
         android:iconTint="@color/colorIcons"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         />
 
     <item
@@ -17,7 +25,7 @@
         app:showAsAction="never"
         android:title="Settings"
         android:iconTint="@color/colorIcons"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         />
 
 </menu>

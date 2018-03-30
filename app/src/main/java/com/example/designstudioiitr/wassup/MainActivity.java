@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             displayWelcomeScreen();
         }
 
-        Log.e(TAG, "onCreate: uid of current user : " + currentUser.getUid().toString());
+        Log.e(TAG, "onCreate: uid of current user : " + currentUser.getUid());
     }
 
     private void displayWelcomeScreen() {
@@ -80,6 +80,10 @@ public class MainActivity extends AppCompatActivity {
 
         if(item.getItemId() == R.id.menuSettings) {
             startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+        }
+
+        if(item.getItemId() == R.id.menuAllUsers) {
+            startActivity(new Intent(MainActivity.this, AllUsersActivity.class));
         }
 
         return true;
