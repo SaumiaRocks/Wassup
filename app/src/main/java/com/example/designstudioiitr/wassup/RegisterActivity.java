@@ -2,6 +2,7 @@ package com.example.designstudioiitr.wassup;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -108,8 +109,8 @@ public class RegisterActivity extends AppCompatActivity {
 
                             userDetails.put("name", name);
                             userDetails.put("status", "Hey there! I'm using Wassup!");
-                            userDetails.put("image", "default");
-                            userDetails.put("thumb_image", "default");
+                            userDetails.put("image", Uri.parse("android.resource://com.example.designstudioiitr.wassup/" + R.mipmap.deafult_profile_round).toString());
+                            userDetails.put("thumb_image", Uri.parse("android.resource://com.example.designstudioiitr.wassup/" + R.mipmap.deafult_profile_round).toString());
 
                             databaseReference.setValue(userDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
