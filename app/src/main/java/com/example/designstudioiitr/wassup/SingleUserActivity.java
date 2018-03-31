@@ -61,6 +61,7 @@ public class SingleUserActivity extends AppCompatActivity {
         tvNumMutualFriends = findViewById(R.id.tvNumMutualFriends);
         btnSendFriendRequest = findViewById(R.id.btnAddFriend);
         btnDeleteRequest = findViewById(R.id.btnDeleteRequest);
+        btnDeleteRequest.setVisibility(View.GONE);
 
         //setting up Progress Dialog
         progressDialog = new ProgressDialog(this);
@@ -73,29 +74,58 @@ public class SingleUserActivity extends AppCompatActivity {
         friendRequestDatabase = FirebaseDatabase.getInstance().getReference().child("FriendRequest");
         friendDatabase = FirebaseDatabase.getInstance().getReference().child("Friends");
 
-        friendRequestDatabase.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+        if(currentUserId.equals(userId)) {
+            btnDeleteRequest.setVisibility(View.GONE);
+            btnSendFriendRequest.setVisibility(View.GONE);
+        }
+
+        friendDatabase.child(currentUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(userId)) {
-                    String requestType = dataSnapshot.child(userId).getValue().toString();
 
-                    if(requestType.equals(REQUEST_SENT)) {
-                        currentState = REQUEST_SENT;
-                        btnSendFriendRequest.setText(CANCEL_FRIEND_REQUEST);
-                    }
-                    else if(requestType.equals(REQUEST_RECEIVED)) {
-                        currentState = REQUEST_RECEIVED;
-                        btnSendFriendRequest.setText(ACCEPT_FRIEND_REQUEST);
-                    }
+                //checking whether friends or not
+                if(dataSnapshot.hasChild(userId)) {
+                    currentState = FRIENDS;
+                    btnSendFriendRequest.setText(UNFRIEND);
+                }
+                else {
+                    currentState = NOT_FRIENDS;
+                    btnSendFriendRequest.setText(SEND_FRIEND_REQUEST);
+
+                    //checking whether friend request has been sent or not
+                    friendRequestDatabase.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChild(userId)) {
+                                String requestType = dataSnapshot.child(userId).getValue().toString();
+
+                                if (requestType.equals(REQUEST_SENT)) {
+                                    currentState = REQUEST_SENT;
+                                    btnSendFriendRequest.setText(CANCEL_FRIEND_REQUEST);
+                                } else if (requestType.equals(REQUEST_RECEIVED)) {
+                                    currentState = REQUEST_RECEIVED;
+                                    btnSendFriendRequest.setText(ACCEPT_FRIEND_REQUEST);
+                                    btnDeleteRequest.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Toast.makeText(SingleUserActivity.this, "Error reading from Database", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
 
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Toast.makeText(SingleUserActivity.this, "Error reading from Database", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -178,21 +208,21 @@ public class SingleUserActivity extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()) {
 
-                                            Toast.makeText(SingleUserActivity.this, "Friend request deleted successfully", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(SingleUserActivity.this, "Friend request cancelled successfully", Toast.LENGTH_SHORT).show();
                                             currentState=NOT_FRIENDS;
                                             btnSendFriendRequest.setText(SEND_FRIEND_REQUEST    );
                                             btnSendFriendRequest.setEnabled(true);
 
                                         }
                                         else{
-                                            Toast.makeText(SingleUserActivity.this, "Could not delete friend request. Please try again...", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(SingleUserActivity.this, "Could not cancel friend request. Please try again...", Toast.LENGTH_SHORT).show();
                                             btnSendFriendRequest.setEnabled(true);
                                         }
                                     }
                                 });
                             }
                             else {
-                                Toast.makeText(SingleUserActivity.this, "Could not delete friend request. Please try again...", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SingleUserActivity.this, "Could not cancel friend request. Please try again...", Toast.LENGTH_SHORT).show();
                                 btnSendFriendRequest.setEnabled(true);
                             }
                         }
@@ -281,17 +311,103 @@ public class SingleUserActivity extends AppCompatActivity {
 
                 }
 
+                else if(currentState.equals(FRIENDS)) {
 
+                    //button text set to Unfriend
 
+                    btnSendFriendRequest.setEnabled(false);
+                    friendDatabase.child(currentUserId)
+                            .child(userId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()) {
+                                friendDatabase.child(userId).child(currentUserId)
+                                        .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()) {
 
+                                            databaseReference.addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    name = dataSnapshot.child("name").getValue().toString();
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+                                                    name = "this person";
+
+                                                }
+                                            });
+
+                                            Toast.makeText(SingleUserActivity.this, "You are no longer friends with " + name, Toast.LENGTH_SHORT).show();
+                                            currentState=NOT_FRIENDS;
+                                            btnSendFriendRequest.setText(SEND_FRIEND_REQUEST);
+                                            btnSendFriendRequest.setEnabled(true);
+
+                                        }
+                                        else{
+                                            Toast.makeText(SingleUserActivity.this, "Sorry, could not process your request right now. Please try again later.", Toast.LENGTH_SHORT).show();
+                                            btnSendFriendRequest.setEnabled(true);
+                                        }
+                                    }
+                                });
+                            }
+                            else {
+                                Toast.makeText(SingleUserActivity.this, "Sorry, could not process your request right now. Please try again later.", Toast.LENGTH_SHORT).show();
+                                btnSendFriendRequest.setEnabled(true);
+                            }
+                        }
+                    });
+                }
             }
         });
 
-        //deleting Friend Request
+        //deleting Friend Request when request state is set to request_received
+
         btnDeleteRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(currentState.equals(REQUEST_RECEIVED)) {
+                    btnDeleteRequest.setEnabled(false);
+                    btnSendFriendRequest.setEnabled(true);
 
+                    friendRequestDatabase.child(currentUserId)
+                            .child(userId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()) {
+                                friendRequestDatabase.child(userId).child(currentUserId)
+                                        .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()) {
+
+                                            Toast.makeText(SingleUserActivity.this, "Friend request deleted successfully", Toast.LENGTH_SHORT).show();
+                                            currentState=NOT_FRIENDS;
+                                            btnSendFriendRequest.setText(SEND_FRIEND_REQUEST);
+                                            btnSendFriendRequest.setEnabled(true);
+                                            btnDeleteRequest.setVisibility(View.GONE);
+
+                                        }
+                                        else{
+                                            Toast.makeText(SingleUserActivity.this, "Could not delete friend request. Please try again...", Toast.LENGTH_SHORT).show();
+                                            btnSendFriendRequest.setEnabled(true);
+                                            btnDeleteRequest.setEnabled(true);
+                                        }
+                                    }
+                                });
+                            }
+                            else {
+                                Toast.makeText(SingleUserActivity.this, "Could not delete friend request. Please try again...", Toast.LENGTH_SHORT).show();
+                                btnSendFriendRequest.setEnabled(true);
+                                btnDeleteRequest.setEnabled(true);
+                            }
+                        }
+                    });
+
+                }
             }
         });
 
