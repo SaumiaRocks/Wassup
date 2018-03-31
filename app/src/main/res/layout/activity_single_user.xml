@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.designstudioiitr.wassup.SingleUserActivity">
+
+    <ImageView
+        android:id="@+id/ivSingleUserImage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/colorAccent"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/deafult_profile"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:background="@color/colorAccent"
+        >
+
+        <TextView
+            android:id="@+id/tvSingleUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:textColor="@color/colorIcons"
+            android:textSize="28sp"
+            />
+
+        <TextView
+            android:id="@+id/tvSingleUserStatus"
+            android:layout_below="@+id/tvSingleUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="@string/defaultStatus"
+            android:textColor="@color/colorIcons"
+            android:textSize="18sp"
+            />
+
+        <LinearLayout
+            android:id="@+id/linLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/tvSingleUserStatus"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="75dp"
+            >
+
+            <TextView
+                android:id="@+id/tvNumFriends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" "
+                android:textColor="@color/colorIcons"
+                android:textSize="14sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" Firends | "
+                android:textColor="@color/colorIcons"
+                android:textSize="14sp"
+                />
+
+            <TextView
+                android:id="@+id/tvNumMutualFriends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" "
+                android:textColor="@color/colorIcons"
+                android:textSize="14sp"
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" Mutual Firends"
+                android:textColor="@color/colorIcons"
+                android:textSize="14sp"
+                />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnAddFriend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linLayout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:text="@string/add_friend"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

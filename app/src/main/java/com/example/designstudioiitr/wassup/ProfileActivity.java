@@ -204,6 +204,10 @@ public class ProfileActivity extends AppCompatActivity {
 
             CropImage.activity(imageUri)
                     .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAllowRotation(true)
+                    .setAutoZoomEnabled(true)
+                    .setMultiTouchEnabled(true)
+                    .setAspectRatio(1,1)
                     .start(this);
 
 

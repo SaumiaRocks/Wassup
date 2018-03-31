@@ -1,5 +1,6 @@
 package com.example.designstudioiitr.wassup;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,6 +49,17 @@ public class AllUsersActivity extends AppCompatActivity {
                 viewHolder.setName(model.getName());
                 viewHolder.setStatus(model.getStatus());
                 viewHolder.setImage(model.getImage());
+
+                final String userId = getRef(position).getKey();
+
+                viewHolder.view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intenet = new Intent(AllUsersActivity.this, SingleUserActivity.class);
+                        intenet.putExtra("userId", userId);
+                        startActivity(intenet);
+                    }
+                });
             }
         };
         rvAllUsers.setAdapter(firebaseRecyclerAdapter);
