@@ -68,7 +68,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" Firends | "
+                android:text="@string/firends"
                 android:textColor="@color/colorIcons"
                 android:textSize="14sp"
                 />
@@ -86,7 +86,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" Mutual Firends"
+                android:text="@string/mutual_firends"
                 android:textColor="@color/colorIcons"
                 android:textSize="14sp"
                 />
@@ -95,14 +95,25 @@
 
         <Button
             android:id="@+id/btnAddFriend"
-            android:layout_width="wrap_content"
+            android:layout_width="215dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/linLayout"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
-            android:text="@string/add_friend"
+            android:text="@string/send_friend_request"
+            />
+
+        <Button
+            android:id="@+id/btnDeleteRequest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnAddFriend"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:text="@string/delete_friend_request"
             android:paddingLeft="25dp"
             android:paddingRight="25dp" />
+
 
     </RelativeLayout>
 

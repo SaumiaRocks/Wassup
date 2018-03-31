@@ -11,4 +11,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_friend">Add Friend</string>
     <string name="defaultStatus">Hey there, I\'m using Wassup!</string>
+    <string name="send_friend_request">Send Friend Request</string>
+    <string name="delete_friend_request">Delete Friend Request</string>
+    <string name="mutual_firends">Mutual Firends</string>
+    <string name="firends">Firends |</string>
 </resources>
