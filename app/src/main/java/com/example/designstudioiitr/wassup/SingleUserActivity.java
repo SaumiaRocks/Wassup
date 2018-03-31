@@ -2,10 +2,10 @@ package com.example.designstudioiitr.wassup;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,12 +20,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class SingleUserActivity extends AppCompatActivity {
+
+    private static final String TAG = "SingleUserActivity";
 
     private static final String CANCEL_FRIEND_REQUEST = "Cancel Friend Request";
     private static final String SEND_FRIEND_REQUEST = "Send Friend Request";
@@ -35,12 +40,13 @@ public class SingleUserActivity extends AppCompatActivity {
     private static final String NOT_FRIENDS = "not_friends";
     private static final String FRIENDS = "friends";
     private static final String REQUEST_RECEIVED = "request_received";
+    private static final String NOTIFICATION_TYPE_REQUEST = "request";
 
     ImageView ivSingleUserProfile;
     Button btnSendFriendRequest, btnDeleteRequest;
     TextView tvSingleUserName, tvSingleUserStatus, tvNumFriends, tvNumMutualFriends;
     String userId, currentUserId;
-    DatabaseReference databaseReference, friendRequestDatabase, friendDatabase;
+    DatabaseReference databaseReference, friendRequestDatabase, friendDatabase, notificationDatabase;
     ProgressDialog progressDialog;
     String currentState = NOT_FRIENDS;
     String name;
@@ -73,6 +79,11 @@ public class SingleUserActivity extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
         friendRequestDatabase = FirebaseDatabase.getInstance().getReference().child("FriendRequest");
         friendDatabase = FirebaseDatabase.getInstance().getReference().child("Friends");
+        notificationDatabase = FirebaseDatabase.getInstance().getReference().child("Notifications");
+        databaseReference.keepSynced(true);
+        friendDatabase.keepSynced(true);
+        friendRequestDatabase.keepSynced(true);
+        notificationDatabase.keepSynced(true);
 
         if(currentUserId.equals(userId)) {
             btnDeleteRequest.setVisibility(View.GONE);
@@ -132,14 +143,36 @@ public class SingleUserActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String name = dataSnapshot.child("name").getValue().toString();
                 String status = dataSnapshot.child("status").getValue().toString();
-                String image = dataSnapshot.child("image").getValue().toString();
+                final String image = dataSnapshot.child("image").getValue().toString();
 
                 tvSingleUserName.setText(name);
                 tvSingleUserStatus.setText(status);
 
                 if(!image.equals("default")) {
-                    Picasso.get().load(Uri.parse(image)).placeholder(R.mipmap.deafult_profile).into(ivSingleUserProfile);
+//                    Picasso.get().load(Uri.parse(image)).placeholder(R.mipmap.deafult_profile).into(ivSingleUserProfile);
+                    Picasso.get()
+                            .load(image)
+                            .networkPolicy(NetworkPolicy.OFFLINE)
+                            .placeholder(R.mipmap.deafult_profile_round)
+                            .into(ivSingleUserProfile, new Callback() {
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+
+                                    Picasso.get()
+                                            .load(image)
+                                            .placeholder(R.mipmap.deafult_profile_round)
+                                            .error(R.mipmap.deafult_profile_round)
+                                            .into(ivSingleUserProfile);
+                                }
+
+                            });
                 }
+
 
                 progressDialog.dismiss();
             }
@@ -170,11 +203,28 @@ public class SingleUserActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()) {
+                                            HashMap<String, String> notificationInfo = new HashMap<>();
+                                            notificationInfo.put("from", currentUserId);
+                                            notificationInfo.put("type", NOTIFICATION_TYPE_REQUEST);
 
-                                            Toast.makeText(SingleUserActivity.this, "Friend Request sent", Toast.LENGTH_SHORT).show();
-                                            currentState=REQUEST_SENT;
-                                            btnSendFriendRequest.setText(CANCEL_FRIEND_REQUEST);
-                                            btnSendFriendRequest.setEnabled(true);
+                                            notificationDatabase.child(userId).push().setValue(notificationInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()) {
+                                                        Toast.makeText(SingleUserActivity.this, "Friend Request sent", Toast.LENGTH_SHORT).show();
+                                                        currentState=REQUEST_SENT;
+                                                        btnSendFriendRequest.setText(CANCEL_FRIEND_REQUEST);
+                                                        btnSendFriendRequest.setEnabled(true);
+                                                    }
+                                                    else
+                                                    {
+                                                        Toast.makeText(SingleUserActivity.this, "Failed Sending Request", Toast.LENGTH_SHORT).show();
+                                                        btnSendFriendRequest.setEnabled(true);
+                                                    }
+                                                }
+                                            });
+
+
 
                                         }
                                         else{
@@ -210,7 +260,7 @@ public class SingleUserActivity extends AppCompatActivity {
 
                                             Toast.makeText(SingleUserActivity.this, "Friend request cancelled successfully", Toast.LENGTH_SHORT).show();
                                             currentState=NOT_FRIENDS;
-                                            btnSendFriendRequest.setText(SEND_FRIEND_REQUEST    );
+                                            btnSendFriendRequest.setText(SEND_FRIEND_REQUEST);
                                             btnSendFriendRequest.setEnabled(true);
 
                                         }
@@ -261,6 +311,7 @@ public class SingleUserActivity extends AppCompatActivity {
                                                                        @Override
                                                                        public void onDataChange(DataSnapshot dataSnapshot) {
                                                                            name = dataSnapshot.child("name").getValue().toString();
+                                                                           Log.e(TAG, "onDataChange: name : " + name );
 
                                                                        }
 
@@ -331,6 +382,7 @@ public class SingleUserActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                                     name = dataSnapshot.child("name").getValue().toString();
+                                                    Log.e(TAG, "onDataChange: name : " + name );
 
                                                 }
 

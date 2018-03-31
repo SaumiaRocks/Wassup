@@ -33,6 +33,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.iceteck.silicompressorr.FileUtils;
 import com.iceteck.silicompressorr.SiliCompressor;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -85,12 +87,14 @@ public class ProfileActivity extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
         mStorageRef = FirebaseStorage.getInstance().getReference().child("profile_picture").child(userId);
 
+        databaseReference.keepSynced(true);
+
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 String name = dataSnapshot.child("name").getValue().toString();
-                String image = dataSnapshot.child("image").getValue().toString();
+                final String image = dataSnapshot.child("image").getValue().toString();
                 String status = dataSnapshot.child("status").getValue().toString();
                 String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
@@ -98,7 +102,29 @@ public class ProfileActivity extends AppCompatActivity {
                 tvProfileStatus.setText(status);
 
                 if(!image.equals("default")) {
-                    Picasso.get().load(image).placeholder(R.mipmap.deafult_profile_round).into(civProfilePicture);
+//                    Picasso.get().load(image).placeholder(R.mipmap.deafult_profile_round).into(civProfilePicture);
+
+                    Picasso.get()
+                            .load(image)
+                            .networkPolicy(NetworkPolicy.OFFLINE)
+                            .placeholder(R.mipmap.deafult_profile_round)
+                            .into(civProfilePicture, new Callback() {
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+
+                                    Picasso.get()
+                                            .load(image)
+                                            .placeholder(R.mipmap.deafult_profile_round)
+                                            .error(R.mipmap.deafult_profile_round)
+                                            .into(civProfilePicture);
+                                }
+
+                            });
                 }
 
             }

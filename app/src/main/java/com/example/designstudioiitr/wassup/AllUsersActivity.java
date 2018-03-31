@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -30,6 +32,7 @@ public class AllUsersActivity extends AppCompatActivity {
         rvAllUsers = findViewById(R.id.rvAllUsers);
         toolbar = findViewById(R.id.all_users_activity_app_bar);
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        databaseReference.keepSynced(true);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("All Users");
@@ -83,9 +86,32 @@ public class AllUsersActivity extends AppCompatActivity {
             TextView tvStatus = view.findViewById(R.id.tvUserStatus);
             tvStatus.setText(status);
         }
-        public void setImage(String image) {
-            CircleImageView civProfilePic = view.findViewById(R.id.civUserProfilePic);
-            Picasso.get().load(image).into(civProfilePic);
+        public void setImage(final String image) {
+            final CircleImageView civProfilePic = view.findViewById(R.id.civUserProfilePic);
+//            Picasso.get().load(image).into(civProfilePic);
+
+            Picasso.get()
+                    .load(image)
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .placeholder(R.mipmap.deafult_profile_round)
+                    .into(civProfilePic, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                            Picasso.get()
+                                    .load(image)
+                                    .placeholder(R.mipmap.deafult_profile_round)
+                                    .error(R.mipmap.deafult_profile_round)
+                                    .into(civProfilePic);
+                        }
+
+                    });
+
         }
     }
 

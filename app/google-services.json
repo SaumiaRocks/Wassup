@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "737556841434-vuodh18k1011igc487e3rr72r8t9fps8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.designstudioiitr.wassup",
+            "certificate_hash": "ccaad453389d1cbbe5fc12381c73c8db736f20a1"
+          }
+        },
+        {
           "client_id": "737556841434-07l8e2h6bebs7blog39757cn3nl2j6q6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
