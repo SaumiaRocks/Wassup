@@ -1,6 +1,10 @@
 package com.example.designstudioiitr.wassup;
 
+import android.app.Instrumentation;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -14,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,9 +31,18 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.iceteck.silicompressorr.FileUtils;
+import com.iceteck.silicompressorr.SiliCompressor;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import id.zelory.compressor.Compressor;
 //import com.theartofdev.edmodo.cropper.CropImage;
 //import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -82,7 +97,9 @@ public class ProfileActivity extends AppCompatActivity {
                 tvProfileName.setText(name);
                 tvProfileStatus.setText(status);
 
-                Picasso.get().load(image).into(civProfilePicture);
+                if(!image.equals("default")) {
+                    Picasso.get().load(image).placeholder(R.mipmap.deafult_profile_round).into(civProfilePicture);
+                }
 
             }
 
@@ -156,8 +173,13 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
+                Log.e(TAG, "onClickListener");
 
                 startActivityForResult(intent, GALLERY_PICK);
+
+
+
+                Log.e(TAG, "onClickListener starting activity");
 
 
 
@@ -170,41 +192,109 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Log.e(TAG, "onActivityResult: entered");
+
         if(requestCode == GALLERY_PICK && resultCode == RESULT_OK) {
-            final Uri imageUri = data.getData();
+            Log.e(TAG, "onActivityResult: Result OK");
+//            Instrumentation.ActivityResult result = new
 
-            final DatabaseReference profilePicDatabase = databaseReference.child("image");
+//            try {
 
-            StorageReference profilePicRef = mStorageRef.child(imageUri.getLastPathSegment());
-            profilePicRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    if(task.isSuccessful()) {
-                        profilePicDatabase.setValue(task.getResult().getDownloadUrl().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                              if(task.isSuccessful()) {
-                                  Toast.makeText(ProfileActivity.this, "Image Uploaded successfully!", Toast.LENGTH_SHORT);
-                              }
-                            }
-                        });
+                Uri imageUri = data.getData();
 
-                    }
-                }
+            CropImage.activity(imageUri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .start(this);
 
 
-            });
 
-
-//            Toast.makeText(this, "onActivityResult", Toast.LENGTH_SHORT).show();
-
-            //enable image cropper
-     /*       CropImage.activity(imageUri)
-                    .start(ProfileActivity.this);
-*/
+          /*  } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, "onActivityResult: catching exception");
+                Toast.makeText(this, "Unexpected error occured....Redirecting", Toast.LENGTH_SHORT).show();
+            }*/
 
         }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+            //storing image
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+
+                DatabaseReference profilePicDatabase = databaseReference.child("image");
+                StorageReference profilePicRef = mStorageRef.child(resultUri.getLastPathSegment());
+
+                profilePicDatabase.setValue(resultUri.toString());
+                profilePicRef.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            Toast.makeText(ProfileActivity.this, "Profile picture changed successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+
+
+                //unable to compress images
+
+           /*     File thumbImage = new File(resultUri.getPath());
+
+                Bitmap compressedImageBitmap = new Compressor(this)
+                        .setMaxHeight(200)
+                        .setMaxHeight(200)
+                        .setQuality(75)
+                        .compressToBitmap(thumbImage);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                compressedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                final byte[] thumbImageByte = baos.toByteArray();
+
+                profilePicRef.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if(task.isSuccessful()) {
+
+                            StorageReference thumbProfilePicRef = mStorageRef.child(task.getResult().getDownloadUrl().getLastPathSegment()).child("thumb_image");
+
+                            UploadTask uploadTask = thumbProfilePicRef.putBytes(thumbImageByte);
+                            uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                    if(task.isSuccessful()) {
+                                        profilePicDatabase.setValue(task.getResult().getDownloadUrl().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()) {
+                                                    Toast.makeText(ProfileActivity.this, "Image Uploaded successfully!", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+
+                                    }
+                                }
+                            });
+
+                            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+//                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+
+
+
+                        }
+                    }
+                });*/
+
+
+
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
     }
+
 
     private void displayWelcomeScreen() {
 
