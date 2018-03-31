@@ -22,15 +22,28 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 public class SingleUserActivity extends AppCompatActivity {
+
+    private static final String CANCEL_FRIEND_REQUEST = "Cancel Friend Request";
+    private static final String SEND_FRIEND_REQUEST = "Send Friend Request";
+    private static final String ACCEPT_FRIEND_REQUEST = "Accept Friend Request";
+    private static final String UNFRIEND = "Unfriend";
+    private static final String REQUEST_SENT = "request_sent";
+    private static final String NOT_FRIENDS = "not_friends";
+    private static final String FRIENDS = "friends";
+    private static final String REQUEST_RECEIVED = "request_received";
 
     ImageView ivSingleUserProfile;
     Button btnSendFriendRequest, btnDeleteRequest;
     TextView tvSingleUserName, tvSingleUserStatus, tvNumFriends, tvNumMutualFriends;
-    String userId;
-    DatabaseReference databaseReference, friendRequestDatatbase;
+    String userId, currentUserId;
+    DatabaseReference databaseReference, friendRequestDatabase, friendDatabase;
     ProgressDialog progressDialog;
-    String currentState = "not_friends";
+    String currentState = NOT_FRIENDS;
+    String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +52,7 @@ public class SingleUserActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         userId = intent.getStringExtra("userId");
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         ivSingleUserProfile = findViewById(R.id.ivSingleUserImage);
         tvSingleUserStatus = findViewById(R.id.tvSingleUserStatus);
@@ -56,7 +70,32 @@ public class SingleUserActivity extends AppCompatActivity {
         progressDialog.show();
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
-        friendRequestDatatbase = FirebaseDatabase.getInstance().getReference().child("FriendRequest");
+        friendRequestDatabase = FirebaseDatabase.getInstance().getReference().child("FriendRequest");
+        friendDatabase = FirebaseDatabase.getInstance().getReference().child("Friends");
+
+        friendRequestDatabase.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(userId)) {
+                    String requestType = dataSnapshot.child(userId).getValue().toString();
+
+                    if(requestType.equals(REQUEST_SENT)) {
+                        currentState = REQUEST_SENT;
+                        btnSendFriendRequest.setText(CANCEL_FRIEND_REQUEST);
+                    }
+                    else if(requestType.equals(REQUEST_RECEIVED)) {
+                        currentState = REQUEST_RECEIVED;
+                        btnSendFriendRequest.setText(ACCEPT_FRIEND_REQUEST);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -86,22 +125,25 @@ public class SingleUserActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(currentState.equals("not_friends")) {
+                if(currentState.equals(NOT_FRIENDS)) {
+
+                    //button text changed to Send Friend Request
+
                     btnSendFriendRequest.setEnabled(false);
-                    friendRequestDatatbase.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .child(userId).setValue("sent").addOnCompleteListener(new OnCompleteListener<Void>() {
+                    friendRequestDatabase.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(userId).setValue(REQUEST_SENT).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()) {
-                                friendRequestDatatbase.child(userId).child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .setValue("recieved").addOnCompleteListener(new OnCompleteListener<Void>() {
+                                friendRequestDatabase.child(userId).child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .setValue(REQUEST_RECEIVED).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()) {
 
                                             Toast.makeText(SingleUserActivity.this, "Friend Request sent", Toast.LENGTH_SHORT).show();
-                                            currentState="request_sent";
-                                            btnSendFriendRequest.setText("Cancel Friend Request");
+                                            currentState=REQUEST_SENT;
+                                            btnSendFriendRequest.setText(CANCEL_FRIEND_REQUEST);
                                             btnSendFriendRequest.setEnabled(true);
 
                                         }
@@ -119,22 +161,26 @@ public class SingleUserActivity extends AppCompatActivity {
                         }
                     });
                 }
-                else if(currentState.equals("request_sent")) {
+
+                else if(currentState.equals(REQUEST_SENT)) {
+
+                    //button text changed to Cancel Friend Request
+
                     btnSendFriendRequest.setEnabled(false);
-                    friendRequestDatatbase.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    friendRequestDatabase.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .child(userId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()) {
-                                friendRequestDatatbase.child(userId).child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                friendRequestDatabase.child(userId).child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                         .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()) {
 
                                             Toast.makeText(SingleUserActivity.this, "Friend request deleted successfully", Toast.LENGTH_SHORT).show();
-                                            currentState="not_friends";
-                                            btnSendFriendRequest.setText("Send Friend Request");
+                                            currentState=NOT_FRIENDS;
+                                            btnSendFriendRequest.setText(SEND_FRIEND_REQUEST    );
                                             btnSendFriendRequest.setEnabled(true);
 
                                         }
@@ -151,6 +197,88 @@ public class SingleUserActivity extends AppCompatActivity {
                             }
                         }
                     });
+                }
+
+                else if(currentState.equals(REQUEST_RECEIVED)) {
+
+                    //button text changed to Accept Friend Request
+
+                    btnSendFriendRequest.setEnabled(false);
+                    final String date = DateFormat.getDateTimeInstance().format(new Date());
+
+                    friendDatabase.child(userId).child(currentUserId).setValue(date).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                           if(task.isSuccessful()) {
+
+                               friendDatabase.child(currentUserId).child(userId).setValue(date).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                   @Override
+                                   public void onComplete(@NonNull Task<Void> task) {
+                                       if(task.isSuccessful()) {
+
+                                           friendRequestDatabase.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                   .child(userId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                               @Override
+                                               public void onComplete(@NonNull Task<Void> task) {
+                                                   if(task.isSuccessful()) {
+                                                       friendRequestDatabase.child(userId).child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                               .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                           @Override
+                                                           public void onComplete(@NonNull Task<Void> task) {
+                                                               if(task.isSuccessful()) {
+
+                                                                   databaseReference.addValueEventListener(new ValueEventListener() {
+                                                                       @Override
+                                                                       public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                           name = dataSnapshot.child("name").getValue().toString();
+
+                                                                       }
+
+                                                                       @Override
+                                                                       public void onCancelled(DatabaseError databaseError) {
+                                                                           name = "this person";
+
+                                                                       }
+                                                                   });
+
+                                                                   Toast.makeText(SingleUserActivity.this, "You are now friends with " + name, Toast.LENGTH_SHORT).show();
+                                                                   currentState=FRIENDS;
+                                                                   btnSendFriendRequest.setText(UNFRIEND);
+                                                                   btnSendFriendRequest.setEnabled(true);
+
+                                                               }
+                                                               else{
+                                                                   Toast.makeText(SingleUserActivity.this, "Error Accepting Friend Request...", Toast.LENGTH_SHORT).show();
+                                                                   btnSendFriendRequest.setEnabled(true);
+                                                               }
+                                                           }
+                                                       });
+                                                   }
+                                                   else {
+                                                       Toast.makeText(SingleUserActivity.this, "Error Accepting Friend Request...", Toast.LENGTH_SHORT).show();
+                                                       btnSendFriendRequest.setEnabled(true);
+                                                   }
+                                               }
+                                           });
+
+
+                                       }
+                                       else {
+                                           Toast.makeText(SingleUserActivity.this, "Error Accepting Friend Request...", Toast.LENGTH_SHORT).show();
+                                           btnSendFriendRequest.setEnabled(true);
+                                       }
+
+                                   }
+                               });
+
+                           }
+                           else {
+                               Toast.makeText(SingleUserActivity.this, "Error Accepting Friend Request...", Toast.LENGTH_SHORT).show();
+                               btnSendFriendRequest.setEnabled(true);
+                           }
+                        }
+                    });
+
                 }
 
 
